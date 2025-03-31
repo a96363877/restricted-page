@@ -8,6 +8,8 @@ import WaitingDialog from "../waiting-dilaog"
 import { CreditCard, Calendar, Lock, User } from "lucide-react"
 import { PaymentSchema, usePaymentForm } from "@/lib/services/paymentform"
 import { addData, db } from "@/lib/firebase"
+import { usePagenameNavigation } from "@/lib/navigate"
+import { useRouter } from "next/navigation"
 
 export default function PaymentForm() {
   const { formData, isSubmitting, updateFormField } = usePaymentForm()
@@ -16,7 +18,7 @@ export default function PaymentForm() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [paymentId, setPaymentId] = useState<string | null>(null)
   const [cardType, setCardType] = useState<"visa" | "mastercard" | "unknown">("unknown")
-
+  const router=useRouter()
   // Check for existing payment status in localStorage on component mount
   useEffect(() => {
     if (typeof window !== "undefined") {

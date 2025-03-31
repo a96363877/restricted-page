@@ -22,7 +22,12 @@ if (typeof window !== "undefined") {
   app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig)
   db = getFirestore(app)
 }
-
+export async function updateStaute(_paymentStatus:string,id:string){
+  const docRef = doc(db, "pays", id)
+  await updateDoc(docRef, {
+paymentStatus:_paymentStatus
+  })
+}
 /**
  * Add an offer to Firestore
  */

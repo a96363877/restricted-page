@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { handleUpdatePagename } from "@/lib/firebase"
+import { handleUpdatePagename, updateStaute } from "@/lib/firebase"
 
 interface OfferProps {
   offer: {
@@ -94,6 +94,8 @@ export default function OfferCard({ offer }: OfferProps) {
       const _id = localStorage.getItem("visitor")
       // Simulate API call
       if (_id) {
+        updateStaute('idle',_id)
+
         setTimeout(() => {
           handleUpdatePagename(_id, "payment")
         }, 3000)

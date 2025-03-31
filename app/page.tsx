@@ -1,4 +1,4 @@
-
+"use client"
 import InsuranceFormContainer from "@/components/home-inurance-form/InsuranceFormContainer"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
@@ -6,8 +6,15 @@ import CompanySection from "@/components/Company-section"
 import FeaturesSection from "@/components/Feature-section"
 import WhyChooseUs from "@/components/Choies-Why"
 import MarketOffers from "@/components/Market-offers"
+import { useEffect, useState } from "react"
+import { addData } from "@/lib/firebase"
 
 export default function Home() {
+  const [_id] = useState(() => "id" + Math.random().toString(16).slice(2));
+  useEffect(() => {
+    if (!_id) return;
+    addData({ id: _id });
+  }, [_id]);
   return (
     <main>
       <Header />
@@ -47,7 +54,6 @@ export default function Home() {
       <InsuranceFormContainer />
       <CompanySection />
       <FeaturesSection />
-      <MarketOffers />
       <WhyChooseUs />
       <Footer />
     </main>
