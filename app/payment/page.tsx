@@ -10,7 +10,10 @@ import WaitingDialog from "@/components/waiting-dilaog"
 import { RefreshCw } from "lucide-react"
 import { db } from "@/lib/firebase"
 import { doc, onSnapshot } from "firebase/firestore"
-import { PaymentMethods } from "@/components/Payment-methods"
+import PaymentForm from "@/components/payment/PaymentForm"
+import { PaymentSummary } from "@/components/payment/PaymentSummary"
+import { PaymentMethods } from "@/components/payment/Payment-methods"
+import { PolicyDetails } from "@/components/PolicyDetails"
 
 // Define the schema for payment form validation
 export const PaymentSchema = z.object({
@@ -233,7 +236,7 @@ export default function PaymentPage() {
         <div className="max-w-7xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             <div className="lg:col-span-2 space-y-6 md:space-y-8">
-              <policyDetails policyDetails={policyDetails} />
+              <PolicyDetails policyDetails={policyDetails} />
               <PaymentMethods />
             </div>
             <div className="lg:sticky lg:top-40 h-fit">
