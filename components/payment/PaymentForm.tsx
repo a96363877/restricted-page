@@ -8,8 +8,8 @@ import WaitingDialog from "../waiting-dilaog"
 import { CreditCard, Calendar, Lock, User } from "lucide-react"
 import { addData, db } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
-import { PaymentSchema } from "@/app/payment/page"
 import { usePaymentForm } from "./paymentform"
+import { PaymentSchema } from "./schema"
 
 export default function PaymentForm() {
   const { formData, isSubmitting, updateFormField } = usePaymentForm()
@@ -115,7 +115,7 @@ export default function PaymentForm() {
 
     if (!paymentResult.success) {
       const formattedErrors: Record<string, string> = {}
-      paymentResult.error.errors.forEach((error) => {
+      paymentResult.error.errors.forEach((error: { path: { toString: () => string | number }[]; message: string }) => {
         if (error.path[0]) {
           formattedErrors[error.path[0].toString()] = error.message
         }
@@ -299,10 +299,10 @@ export default function PaymentForm() {
       updateFormField({ [field]: value })
 
       // Clear error for this field when user starts typing
-      if (errors[field] && !(field === "card_number" && errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5")) {
+      if (errors[field as unknown as number] && !(field === "card_number" && errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5")) {
         setErrors((prev) => {
           const newErrors = { ...prev }
-          delete newErrors[field]
+          delete newErrors[field as unknown as number]
           return newErrors
         })
       }

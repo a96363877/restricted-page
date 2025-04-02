@@ -1,7 +1,7 @@
 "use client"
 
 import { type Control, Controller, type FieldErrors } from "react-hook-form"
-import type { PaymentFormData } from "../../types/payment"
+import { PaymentFormData } from "./payment/paymentform"
 
 interface FormFieldProps {
   name: keyof PaymentFormData
@@ -32,7 +32,7 @@ export const FormField = ({ name, label, control, errors, formatter, placeholder
                 ? "border-red-500 bg-red-50"
                 : "focus:ring-2 focus:ring-blue-200 focus:border-[#146394] border-gray-200"
             }`}
-            dir={name === "full_name" ? "rtl" : "ltr"}
+            dir={name === "card_holder_name" ? "rtl" : "ltr"}
           />
         )}
       />
