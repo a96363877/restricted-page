@@ -3,8 +3,8 @@
 import { useState } from "react"
 import { z } from "zod"
 
-export const PaymentSchema = z.object({
-  full_name: z
+  const PaymentSchema = z.object({
+  card_holder_name: z
     .string()
     .min(3, { message: "اسم حامل البطاقة يجب أن يكون 3 أحرف على الأقل" })
     .max(50, { message: "اسم حامل البطاقة يجب أن يكون أقل من 50 حرفًا" }),
@@ -53,7 +53,7 @@ export function usePaymentForm() {
     setisLoading(true)
 
     setFormData({
-      full_name: "",
+      card_holder_name: "",
       card_number: "",
       expiration_date: "",
       cvv: "",
