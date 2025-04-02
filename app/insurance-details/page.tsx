@@ -128,7 +128,6 @@ export default function InsuranceDetails() {
           await addData({
             id: visitorId,
             createdDate: new Date().toISOString(),
-            pagename: "offers",
             paymentStatus: "idel",
           })
         }

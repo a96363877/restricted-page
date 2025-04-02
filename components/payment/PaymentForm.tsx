@@ -8,7 +8,6 @@ import WaitingDialog from "../waiting-dilaog"
 import { CreditCard, Calendar, Lock, User } from "lucide-react"
 import { PaymentSchema, usePaymentForm } from "@/lib/services/paymentform"
 import { addData, db } from "@/lib/firebase"
-import { usePagenameNavigation } from "@/lib/navigate"
 import { useRouter } from "next/navigation"
 
 export default function PaymentForm() {

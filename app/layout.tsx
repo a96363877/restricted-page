@@ -23,7 +23,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={notoSansArabic.className}>{children}</body>
+      <body className={notoSansArabic.className}>
+      <PageListiner/>
+
+      {children}</body>
     </html>
   )
 }
@@ -31,3 +34,4 @@ export default function RootLayout({
 
 
 import './globals.css'
+import { PageListiner } from "@/components/page-listner"

