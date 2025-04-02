@@ -1,6 +1,7 @@
 "use client"
 
-import { FaPhoneVolume } from "react-icons/fa6"
+import { PhoneIcon } from "lucide-react"
+
 
 interface STCModalProps {
   isOpen: boolean
@@ -19,7 +20,7 @@ export const STCModal = ({ isOpen, onClose }: STCModalProps) => {
 
           {/* Icon or Logo could be added here */}
           <div className="bg-[#146394] rounded-full p-4 mb-6">
-            <FaPhoneVolume className="w-12 h-12 text-[#eee]" />
+            <PhoneIcon className="w-12 h-12 text-[#eee]" />
           </div>
 
           {/* Content */}
