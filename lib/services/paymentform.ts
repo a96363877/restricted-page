@@ -14,7 +14,7 @@ export const PaymentSchema = z.object({
   expiration_date: z
     .string()
     .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
-      message: "تنسيق تاريخ الانتها�� غير صالح (MM/YY)",
+      message: "تنسيق تاريخ الانتهاء غير صالح (MM/YY)",
     })
     .refine(
       (value) => {
