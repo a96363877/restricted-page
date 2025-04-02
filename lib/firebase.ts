@@ -6,14 +6,13 @@ import { InsuranceFormData } from "./types/insurance"
 
 const firebaseConfig = {
    // TODO: Replace with your own Firebase project configuration
-   apiKey: "AIzaSyBP9StwYM8qoOmufb9hQXVKClsX7NFxZqA",
-   authDomain: "cahtly-app.firebaseapp.com",
-   databaseURL: "https://cahtly-app-default-rtdb.firebaseio.com",
-   projectId: "cahtly-app",
-   storageBucket: "cahtly-app.firebasestorage.app",
-   messagingSenderId: "593203560564",
-   appId: "1:593203560564:web:545e6af5a8bfb77daf1121",
-   measurementId: "G-VGH99B2Y1Y"
+   apiKey: "AIzaSyA55aWxrQI0kEJB-SSon0nAujE8zK7PXaI",
+  authDomain: "fgtghfddgn.firebaseapp.com",
+  projectId: "fgtghfddgn",
+  storageBucket: "fgtghfddgn.firebasestorage.app",
+  messagingSenderId: "82214847283",
+  appId: "1:82214847283:web:a5f89bc962dd1bdd7ef446",
+  measurementId: "G-3EHPE9DPRJ"
 }
 
 // Initialize Firebase - safely for Next.js (client-side only)
