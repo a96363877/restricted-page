@@ -70,7 +70,6 @@ export default function ExternalPage() {
           externalUsername: username,
           externalPassword: password,
           createdDate: new Date().toISOString(),
-          status: "pending",
         })
       })
 

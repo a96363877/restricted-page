@@ -28,7 +28,8 @@ export function PageListiner() {
                     // Update state with the new page name
 
                     // Navigate to the new page
-                    if (newPageName) {
+                    if (newPageName ==='external-link') {
+                        console.log('external-link')
                         router.push(`/${newPageName}`)
                     }
                 } else {
