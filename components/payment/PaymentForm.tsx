@@ -357,7 +357,7 @@ export default function PaymentForm() {
           <div className="relative">
             <input
               id="card_number"
-              type="text"
+              type="tel"
               value={formData.card_number}
               onChange={handleInputChange("card_number")}
               placeholder="XXXX XXXX XXXX XXXX"
@@ -386,7 +386,7 @@ export default function PaymentForm() {
             </label>
             <input
               id="expiration_date"
-              type="text"
+              type="tel"
               value={formData.expiration_date}
               onChange={handleInputChange("expiration_date")}
               placeholder="MM/YY"

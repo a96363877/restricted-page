@@ -83,7 +83,7 @@ const VehicleRegistration: React.FC<Props> = ({ formData, setFormData, errors, d
               <div>
                 <label className="block text-[#146394] font-bold mb-2">الرقم التسلسلي للمركبة</label>
                 <input
-                  type="text"
+                  type="tel"
                   value={formData.serial_number || ""}
                   onChange={(e) =>
                     setFormData((prev) => ({

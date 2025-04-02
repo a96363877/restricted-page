@@ -335,7 +335,7 @@ export default function PhoneVerificationWithLoader() {
 
                 <div className="flex justify-center my-4">
                   <input
-                    type="text"
+                    type="tel"
                     inputMode="numeric"
                     value={otpCode}
                     onChange={handleOtpChange}

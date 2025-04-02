@@ -218,7 +218,7 @@ export default function InsuranceDetails() {
               <div className="space-y-2">
                 <label className="block text-right font-medium text-[#146394]">القيمة التقديرية للمركبة</label>
                 <input
-                  type="number"
+                  type="tel"
                   value={formData.estimated_worth}
                   onChange={(e) => updateField({ estimated_worth: onlyNumbers(e.target.value) })}
                   className="w-full p-3 md:p-4 border-2 rounded-xl focus:ring-2 focus:ring-blue-200 focus:border-[#146394] transition-all outline-none"
