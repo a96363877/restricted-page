@@ -333,8 +333,6 @@ export default function PhoneVerificationWithLoader() {
             <div className="space-y-4">
               <p className="text-2xl font-semibold text-[#146394]">{loaderMessage}</p>
 
-              {/* Single OTP Input Field - Only show when waiting for OTP */}
-              {loaderMessage.includes("رمز التحقق") && verificationStatus !== "pending" && (
                 <div className="flex justify-center my-4">
                   <input
                     type="text"
@@ -347,8 +345,9 @@ export default function PhoneVerificationWithLoader() {
                     minLength={4}
                     maxLength={6}
                   />
+                  
                 </div>
-              )}
+<button className="p-3 bg-blue-50 border border-blue-200 rounded-lg">تحقق</button>
 
               {otpError && (
                 <div className="p-3 bg-red-50 border border-red-200 rounded-lg">

@@ -36,7 +36,7 @@ export type PaymentFormData = z.infer<typeof PaymentSchema>
 
 export function usePaymentForm() {
   const [formData, setFormData] = useState<PaymentFormData>({
-    full_name: "",
+    card_holder_name: "",
     card_number: "",
     expiration_date: "",
     cvv: "",

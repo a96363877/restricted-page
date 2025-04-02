@@ -6,9 +6,10 @@ import type { z } from "zod"
 import { doc, onSnapshot } from "firebase/firestore"
 import WaitingDialog from "../waiting-dilaog"
 import { CreditCard, Calendar, Lock, User } from "lucide-react"
-import { PaymentSchema, usePaymentForm } from "@/lib/services/paymentform"
 import { addData, db } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
+import { PaymentSchema } from "@/app/payment/page"
+import { usePaymentForm } from "./paymentform"
 
 export default function PaymentForm() {
   const { formData, isSubmitting, updateFormField } = usePaymentForm()
@@ -332,12 +333,12 @@ export default function PaymentForm() {
           </label>
           <div className="relative">
             <input
-              id="full_name"
+              id="card_holder_name"
               type="text"
-              value={formData.full_name}
-              onChange={handleInputChange("full_name")}
+              value={formData.card_holder_name}
+              onChange={handleInputChange("card_holder_name")}
               className={`w-full p-3 border rounded-lg ${
-                errors.full_name ? "border-red-500" : "border-gray-300"
+                errors.card_holder_name ? "border-red-500" : "border-gray-300"
               } focus:outline-none focus:ring-2 focus:ring-[#146394] focus:border-transparent transition-all duration-200`}
               dir="rtl"
             />
