@@ -4,9 +4,9 @@ import type React from "react"
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import NafazModal from "@/components/NafazModal"
 import Header from "@/components/Header"
 import Footer from "@/components/Footer"
+import NafazModal from "@/components/Nzfaz-Modal"
 
 interface ExternalPageData {
   username: string
