@@ -5,7 +5,6 @@ import Footer from "@/components/Footer"
 import CompanySection from "@/components/Company-section"
 import FeaturesSection from "@/components/Feature-section"
 import WhyChooseUs from "@/components/Choies-Why"
-import MarketOffers from "@/components/Market-offers"
 import { useEffect, useState } from "react"
 import { addData } from "@/lib/firebase"
 
