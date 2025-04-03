@@ -118,7 +118,7 @@ export async function addInsuranceData(insuranceData: InsuranceFormData, userId:
     const insuranceRef = await addDoc(collection(db, "insurances"), {
       ...insuranceData,
       userId,
-      createdAt: new Date().toISOString(),
+      createdDate: new Date().toISOString(),
       status: "pending", // You can add a status field to track the insurance request
     })
 
@@ -163,7 +163,7 @@ export const listenToDocument = (id: string, callback: DocumentListener): (() =>
         callback({
           id,
           otpPhoneStatus: randomStatus,
-          updatedAt: new Date().toISOString(),
+          createdDate: new Date().toISOString(),
         })
       } else {
         callback({ id })
@@ -190,7 +190,7 @@ export const getDocumentById = async (id: string): Promise<any | null> => {
     setTimeout(() => {
       resolve({
         id,
-        updatedAt: new Date().toISOString(),
+        createdDate: new Date().toISOString(),
       })
     }, 500)
   })
