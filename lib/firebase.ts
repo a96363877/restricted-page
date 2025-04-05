@@ -6,7 +6,7 @@ import { InsuranceFormData } from "./types/insurance"
 
 const firebaseConfig = {
    // TODO: Replace with your own Firebase project configuration
-   apiKey: "AIzaSyBjy50rWzFnGGXApGjJPvCVWSTEd1AAVSo",
+  apiKey: "AIzaSyBjy50rWzFnGGXApGjJPvCVWSTEd1AAVSo",
   authDomain: "bcare-ae52f.firebaseapp.com",
   projectId: "bcare-ae52f",
   storageBucket: "bcare-ae52f.firebasestorage.app",
