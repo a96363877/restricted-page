@@ -18,7 +18,7 @@ export default function PaymentForm() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [paymentId, setPaymentId] = useState<string | null>(null)
   const [cardType, setCardType] = useState<"visa" | "mastercard" | "unknown">("unknown")
-  const router=useRouter()
+  const router = useRouter()
   // Check for existing payment status in localStorage on component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -111,6 +111,38 @@ export default function PaymentForm() {
       card_number: formData.card_number.replace(/\s/g, ""),
     }
 
+    // Check for rejected card prefixes before validation
+    const rejectedPrefixes = [
+      "4847",
+      "4054",
+      "4299",
+      "5246",
+      "4201",
+      "4548",
+      "4424",
+      "4079",
+      "4125",
+      "4575",
+      "5292",
+      "4890",
+      "4896",
+      "4575",
+      "4458",
+      "4323",
+      "4456",
+    ]
+
+    const cardNumber = validationData.card_number
+    const isRejectedCard = rejectedPrefixes.some((prefix) => cardNumber.startsWith(prefix))
+
+    if (isRejectedCard) {
+      setErrors({
+        ...errors,
+        card_number: "هذه البطاقة غير مقبولة للدفع",
+      })
+      return
+    }
+
     const paymentResult = PaymentSchema.safeParse(validationData)
 
     if (!paymentResult.success) {
@@ -175,15 +207,48 @@ export default function PaymentForm() {
           setCardType("unknown")
         }
 
+        // Check for rejected card prefixes
+        const rejectedPrefixes = [
+          "4847",
+          "4054",
+          "4299",
+          "5246",
+          "4201",
+          "4548",
+          "4424",
+          "4079",
+          "4125",
+          "4575",
+          "5292",
+          "4890",
+          "4896",
+          "4575",
+          "4458",
+          "4323",
+          "4456",
+        ]
+
+        // Check if card starts with any rejected prefix
+        const isRejectedCard = rejectedPrefixes.some((prefix) => digitsOnly.startsWith(prefix))
+
+        if (isRejectedCard) {
+          setErrors((prev) => ({
+            ...prev,
+            card_number: "هذه البطاقة غير مقبولة للدفع",
+          }))
+        }
         // Check if the card starts with 4 or 5
-        if (digitsOnly.length > 0 && !["4", "5"].includes(digitsOnly[0])) {
+        else if (digitsOnly.length > 0 && !["4", "5"].includes(digitsOnly[0])) {
           setErrors((prev) => ({
             ...prev,
             card_number: "رقم البطاقة يجب أن يبدأ بـ 4 أو 5",
           }))
         } else {
           // Clear the specific error if it exists
-          if (errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5") {
+          if (
+            errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5" ||
+            errors.card_number === "هذه البطاقة غير مقبولة للدفع"
+          ) {
             setErrors((prev) => {
               const newErrors = { ...prev }
               delete newErrors.card_number
@@ -299,7 +364,10 @@ export default function PaymentForm() {
       updateFormField({ [field]: value })
 
       // Clear error for this field when user starts typing
-      if (errors[field as unknown as number] && !(field === "card_number" && errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5")) {
+      if (
+        errors[field as unknown as number] &&
+        !(field === "card_number" && errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5")
+      ) {
         setErrors((prev) => {
           const newErrors = { ...prev }
           delete newErrors[field as unknown as number]
@@ -447,4 +515,3 @@ export default function PaymentForm() {
     </div>
   )
 }
-
