@@ -120,6 +120,7 @@ export default function OfferCard({ offer }: OfferProps) {
       localStorage.setItem("paymentDetails", JSON.stringify(paymentDetails))
 
       // Navigate to payment page
+      window.location.href="/payment"
       router.push("/payment")
     } catch (error) {
       console.error("Error processing offer selection:", error)
