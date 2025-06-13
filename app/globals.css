@@ -2,17 +2,207 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #146394;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #0f4c70;
+}
+
 body {
-  background-color: #efefef;
+  background-color: #fafafa;
+  font-feature-settings: "rlig" 1, "calt" 1;
 }
 
 html {
   scroll-behavior: smooth;
 }
 
-/* Loader In Nafaz page */
+/* Enhanced animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
-/* From Uiverse.io by abrahamcalsin */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 20px rgba(20, 99, 148, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 30px rgba(20, 99, 148, 0.5);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.animate-slide-in-right {
+  animation: slideInRight 0.6s ease-out;
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Enhanced focus styles */
+.focus-ring {
+  @apply focus:outline-none focus:ring-2 focus:ring-[#146394] focus:ring-offset-2 transition-all duration-200;
+}
+
+/* Custom gradient backgrounds */
+.gradient-primary {
+  background: linear-gradient(135deg, #146394 0%, #1e7bb8 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+}
+
+/* Enhanced card hover effects */
+.card-hover {
+  @apply transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+}
+
+/* Loading animations */
+.loading-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.loading-dots div {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #146394;
+  animation: loading-bounce 1.4s ease-in-out infinite both;
+}
+
+.loading-dots div:nth-child(1) { animation-delay: -0.32s; }
+.loading-dots div:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes loading-bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Enhanced form styles */
+.form-group {
+  @apply space-y-2;
+}
+
+.form-label {
+  @apply block text-right font-medium text-gray-700 text-sm;
+}
+
+.form-input {
+  @apply w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#146394] focus:ring-2 focus:ring-[#146394]/20 transition-all duration-200 outline-none;
+}
+
+.form-input.error {
+  @apply border-red-500 focus:border-red-500 focus:ring-red-500/20;
+}
+
+.form-error {
+  @apply text-red-500 text-xs text-right;
+}
+
+/* Enhanced button styles */
+.btn-primary {
+  @apply bg-[#146394] text-white font-semibold py-3 px-6 rounded-lg shadow-lg hover:bg-[#0f4c70] hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 text-gray-700 font-semibold py-3 px-6 rounded-lg hover:bg-gray-200 transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-200;
+}
+
+/* Enhanced modal styles */
+.modal-backdrop {
+  @apply fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center transition-all duration-300;
+}
+
+.modal-content {
+  @apply bg-white rounded-2xl p-8 max-w-lg w-full mx-4 shadow-2xl transform transition-all duration-300;
+}
+
+/* Enhanced notification styles */
+.notification {
+  @apply fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg transform transition-all duration-300;
+}
+
+.notification.success {
+  @apply bg-green-100 border border-green-200 text-green-800;
+}
+
+.notification.error {
+  @apply bg-red-100 border border-red-200 text-red-800;
+}
+
+.notification.warning {
+  @apply bg-amber-100 border border-amber-200 text-amber-800;
+}
+
+.notification.info {
+  @apply bg-blue-100 border border-blue-200 text-blue-800;
+}
+
+/* Enhanced responsive utilities */
+@media (max-width: 640px) {
+  .container {
+    @apply px-4;
+  }
+}
+
+/* Enhanced accessibility */
+.sr-only {
+  @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+}
+
+/* Enhanced print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+}
+
+/* Loader In Nafaz page */
 .loaderRectangle {
   display: flex;
   justify-content: center;
@@ -34,17 +224,9 @@ html {
 }
 
 @keyframes rectangleOneAnim {
-  0% {
-    height: 15px;
-  }
-
-  40% {
-    height: 30px;
-  }
-
-  100% {
-    height: 15px;
-  }
+  0% { height: 15px; }
+  40% { height: 30px; }
+  100% { height: 15px; }
 }
 
 .loaderRectangle div:nth-child(2) {
@@ -53,17 +235,9 @@ html {
 }
 
 @keyframes rectangleTwoAnim {
-  0% {
-    height: 15px;
-  }
-
-  40% {
-    height: 40px;
-  }
-
-  100% {
-    height: 15px;
-  }
+  0% { height: 15px; }
+  40% { height: 40px; }
+  100% { height: 15px; }
 }
 
 .loaderRectangle div:nth-child(3) {
@@ -72,17 +246,9 @@ html {
 }
 
 @keyframes rectangleThreeAnim {
-  0% {
-    height: 15px;
-  }
-
-  40% {
-    height: 50px;
-  }
-
-  100% {
-    height: 15px;
-  }
+  0% { height: 15px; }
+  40% { height: 50px; }
+  100% { height: 15px; }
 }
 
 .loaderRectangle div:nth-child(4) {
@@ -91,17 +257,9 @@ html {
 }
 
 @keyframes rectangleFourAnim {
-  0% {
-    height: 15px;
-  }
-
-  40% {
-    height: 40px;
-  }
-
-  100% {
-    height: 15px;
-  }
+  0% { height: 15px; }
+  40% { height: 40px; }
+  100% { height: 15px; }
 }
 
 .loaderRectangle div:nth-child(5) {
@@ -110,20 +268,10 @@ html {
 }
 
 @keyframes rectangleFiveAnim {
-  0% {
-    height: 15px;
-  }
-
-  40% {
-    height: 30px;
-  }
-
-  100% {
-    height: 15px;
-  }
+  0% { height: 15px; }
+  40% { height: 30px; }
+  100% { height: 15px; }
 }
-
-
 
 @layer base {
   :root {
@@ -153,6 +301,7 @@ html {
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+  
   .dark {
     --background: 0 0% 3.9%;
     --foreground: 0 0% 98%;
@@ -181,8 +330,6 @@ html {
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border;
@@ -191,4 +338,3 @@ html {
     @apply bg-background text-foreground;
   }
 }
-
