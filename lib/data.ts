@@ -25,19 +25,19 @@ export const offerData = [
       {
         id: "d4f0d676-3b2a-4485-ac83-c00556ed27cf",
         content: "تغطية الحوادث الشخصية للسائق والركاب",
-        price: 50,
+        price: 24,
         offer_id: "d6be6306-74c4-4edb-ac7a-3f2be2427f3c",
       },
       {
         id: "4f028efc-b020-4982-afb7-c3afaab0d251",
         content: "المساعدة على الطريق",
-        price: 30,
+        price: 12,
         offer_id: "d6be6306-74c4-4edb-ac7a-3f2be2427f3c",
       },
       {
         id: "551325da-4418-48b6-941f-c0788a72d440",
         content: "تغطية ضد كسر الزجاج والحرائق والسرقة",
-        price: 150,
+        price: 100,
         offer_id: "d6be6306-74c4-4edb-ac7a-3f2be2427f3c",
       },
       {
@@ -67,7 +67,7 @@ export const offerData = [
     name: "tawuniya insurance",
     company_id: "2c529dd3-4929-4ff6-b6b7-4c37b04dfe1d",
     type: "against-others",
-    main_price: "556",
+    main_price: "344",
     created_at: "2025-03-24T18:48:18.564Z",
     updated_at: "2025-03-24T18:48:18.564Z",
     company: {
@@ -94,7 +94,7 @@ export const offerData = [
       {
         id: "e8679a82-1ac1-4a7e-b482-4f3a6ec88fed",
         content: "تغطية الحوادث الشخصية للسائق والركاب",
-        price: 360,
+        price: 140,
         offer_id: "89b5e898-a407-4006-b764-9320ec0e9ad7",
       },
       {
@@ -130,7 +130,7 @@ export const offerData = [
     name: "salama insurance",
     company_id: "3bf907cb-c198-4091-bfa2-edade30dc64b",
     type: "against-others",
-    main_price: "586.74",
+    main_price: "233.74",
     created_at: "2025-03-24T18:48:18.618Z",
     updated_at: "2025-03-24T18:48:18.618Z",
     company: {
@@ -159,7 +159,7 @@ export const offerData = [
       {
         id: "609c0674-a479-4543-80ec-76f91606a12b",
         reason: "ضريبة القيمة المضافة",
-        price: 100.99,
+        price: 31.99,
         offer_id: "ef1894fa-55e6-4a3e-b97d-4ebb4a1d9f84",
       },
       {
@@ -175,7 +175,7 @@ export const offerData = [
     name: "liva insurance",
     company_id: "26a9d328-9160-4c0c-a439-156d677e259c",
     type: "against-others",
-    main_price: "721.6",
+    main_price: "442.6",
     created_at: "2025-03-24T18:48:18.462Z",
     updated_at: "2025-03-24T18:48:18.462Z",
     company: {
@@ -204,7 +204,7 @@ export const offerData = [
       {
         id: "5310b129-8a6a-4239-8dd2-1cbff9c961b1",
         reason: "ضريبة القيمة المضافة",
-        price: 121.8,
+        price: 111.8,
         offer_id: "b196ddaf-b67f-480a-b7d2-614456dbd00a",
       },
     ],
@@ -214,7 +214,7 @@ export const offerData = [
     name: "med gulf insurance",
     company_id: "477021e2-f080-4568-8245-7f5299d237e9",
     type: "against-others",
-    main_price: "734.37",
+    main_price: "332.37",
     created_at: "2025-03-24T18:48:18.529Z",
     updated_at: "2025-03-24T18:48:18.529Z",
     company: {
@@ -243,7 +243,7 @@ export const offerData = [
       {
         id: "9e0a5f88-7468-4464-af60-4abaefd73098",
         reason: "ضريبة القيمة المضافة",
-        price: 123.92,
+        price: 103.92,
         offer_id: "61feff99-d37b-4c68-8ca0-12c7b637fe69",
       },
     ],
@@ -253,7 +253,7 @@ export const offerData = [
     name: "gulf union insurance",
     company_id: "68dcdb12-61b1-40ff-bac8-00f4d7ed6e2e",
     type: "against-others",
-    main_price: "769.72",
+    main_price: "342.72",
     created_at: "2025-03-24T18:48:18.454Z",
     updated_at: "2025-03-24T18:48:18.454Z",
     company: {
@@ -298,7 +298,7 @@ export const offerData = [
     name: "al etihad insurance",
     company_id: "e328e66a-5406-4137-ba87-58ee587bee43",
     type: "against-others",
-    main_price: "796.22",
+    main_price: "333.22",
     created_at: "2025-03-24T18:48:18.538Z",
     updated_at: "2025-03-24T18:48:18.538Z",
     company: {
@@ -343,7 +343,7 @@ export const offerData = [
     name: "acig insurance",
     company_id: "efa36a9d-b60e-4088-8fd1-81e5d3571305",
     type: "against-others",
-    main_price: "851.3",
+    main_price: "551.3",
     created_at: "2025-03-24T18:48:18.642Z",
     updated_at: "2025-03-24T18:48:18.642Z",
     company: {
@@ -370,7 +370,7 @@ export const offerData = [
       {
         id: "f7d8a680-c22a-4094-9acc-a1bb67ee95c8",
         content: "تغطية الحوادث الشخصية للسائق والركاب",
-        price: 360,
+        price: 200,
         offer_id: "1496dffa-9d73-40d0-bcb7-9e5eeb8ece05",
       },
     ],
@@ -400,7 +400,7 @@ export const offerData = [
     name: "united corporate insurance",
     company_id: "4d893fc5-cacd-4e07-8b6b-06409269b3ab",
     type: "against-others",
-    main_price: "855.84",
+    main_price: "455.84",
     created_at: "2025-03-24T18:48:18.509Z",
     updated_at: "2025-03-24T18:48:18.509Z",
     company: {
@@ -463,7 +463,7 @@ export const offerData = [
     name: "buruj insurance",
     company_id: "5f906ee8-614a-4cd0-8d8d-d25e3befc8e6",
     type: "against-others",
-    main_price: "863.32",
+    main_price: "363.32",
     created_at: "2025-03-24T18:48:18.603Z",
     updated_at: "2025-03-24T18:48:18.603Z",
     company: {
@@ -514,7 +514,7 @@ export const offerData = [
     name: "takaful rajhi insurance",
     company_id: "c105bc29-4514-4b7d-8b69-3e3578f58ceb",
     type: "against-others",
-    main_price: "972.14",
+    main_price: "472.14",
     created_at: "2025-03-24T18:48:18.493Z",
     updated_at: "2025-03-24T18:48:18.493Z",
     company: {
@@ -578,7 +578,7 @@ export const offerData = [
     name: "walaa insurance",
     company_id: "2729eeac-e585-4b3e-b59a-6d17fb09e6ef",
     type: "against-others",
-    main_price: "979.27",
+    main_price: "479.27",
     created_at: "2025-03-24T18:48:18.516Z",
     updated_at: "2025-03-24T18:48:18.516Z",
     company: {
@@ -680,7 +680,7 @@ export const offerData = [
     name: "arabia insurance",
     company_id: "ccca40af-08fc-49fc-8cf5-70e25031171f",
     type: "against-others",
-    main_price: "1025.94",
+    main_price: "670.94",
     created_at: "2025-03-24T18:48:18.469Z",
     updated_at: "2025-03-24T18:48:18.469Z",
     company: {
@@ -731,7 +731,7 @@ export const offerData = [
     name: "alsagr insurance",
     company_id: "a7f58a1f-c05d-4aba-89fb-6aad6a85e5db",
     type: "against-others",
-    main_price: "1066.4",
+    main_price: "700.4",
     created_at: "2025-03-24T18:48:18.424Z",
     updated_at: "2025-03-24T18:48:18.424Z",
     company: {
@@ -770,7 +770,7 @@ export const offerData = [
     name: "takaful rajhi insurance",
     company_id: "c105bc29-4514-4b7d-8b69-3e3578f58ceb",
     type: "comprehensive",
-    main_price: "1132.83",
+    main_price: "679.83",
     created_at: "2025-03-24T18:48:18.502Z",
     updated_at: "2025-03-24T18:48:18.502Z",
     company: {
@@ -839,7 +839,7 @@ export const offerData = [
     name: "arabian shield insurance",
     company_id: "133cb307-f173-418a-b553-55000f84369e",
     type: "against-others",
-    main_price: "1200",
+    main_price: "800",
     created_at: "2025-03-24T18:48:18.590Z",
     updated_at: "2025-03-24T18:48:18.590Z",
     company: {
@@ -896,7 +896,7 @@ export const offerData = [
     name: "allianz insurance",
     company_id: "a3639fbd-7d8b-4426-9c25-a6b60403d689",
     type: "against-others",
-    main_price: "1281.72",
+    main_price: "897.72",
     created_at: "2025-03-24T18:48:18.635Z",
     updated_at: "2025-03-24T18:48:18.635Z",
     company: {
@@ -935,7 +935,7 @@ export const offerData = [
     name: "gulf general insurance",
     company_id: "18bf283a-88d5-4079-8666-14c049dfbb2e",
     type: "against-others",
-    main_price: "1422.79",
+    main_price: "888.79",
     created_at: "2025-03-24T18:48:18.435Z",
     updated_at: "2025-03-24T18:48:18.435Z",
     company: {
@@ -1043,7 +1043,7 @@ export const offerData = [
     name: "amana insurance",
     company_id: "cd4b015f-e4a9-41ff-8432-a6469e42698e",
     type: "comprehensive",
-    main_price: "1992.42",
+    main_price: "900.42",
     created_at: "2025-03-24T18:48:18.584Z",
     updated_at: "2025-03-24T18:48:18.584Z",
     company: {

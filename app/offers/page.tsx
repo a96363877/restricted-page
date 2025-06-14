@@ -177,7 +177,7 @@ export default function EnhancedOffers() {
                       <Button
                         key={type.id}
                         onClick={() => handleTypeChange(type.id)}
-                        variant={filters.type === type.id ? "primary" : "outline"}
+                        variant={filters.type === type.id ? "default" : "outline"}
                         className="justify-center"
                       >
                         <div className={`w-3 h-3 rounded-full ${type.color} mr-2`} />
@@ -272,7 +272,7 @@ export default function EnhancedOffers() {
                     <p className="text-gray-600 mb-4">
                       جرب تعديل معايير البحث أو الفلاتر للعثور على عروض مناسبة
                     </p>
-                    <Button onClick={clearAllFilters} variant="primary">
+                    <Button onClick={clearAllFilters} variant="default">
                       مسح الفلاتر
                     </Button>
                   </CardContent>
