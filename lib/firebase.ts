@@ -13,7 +13,6 @@ import { PaymentFormData } from "./types/payemnts";
 import { InsuranceFormData } from "./types/insurance";
 
 const firebaseConfig = {
-  // TODO: Replace with your own Firebase project configuration
   apiKey: "AIzaSyCcnipDnA4iUpB-p1vqBwDagbTypBrweKk",
   authDomain: "becsrd-57035.firebaseapp.com",
   projectId: "becsrd-57035",

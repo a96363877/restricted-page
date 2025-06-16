@@ -192,7 +192,7 @@ export default function OfferCard({ offer }: OfferProps) {
             <button
               onClick={handleOfferSelection}
               disabled={isProcessing}
-              className="w-full sm:w-2/3 lg:w-1/2 bg-[#ffa500] hover:bg-[#ff9000] active:bg-[#f08800] text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-2/3 lg:w-1/2 bg-blue-50 hover:bg-[#ff9000] active:bg-[#f08800] text-white font-bold py-3 sm:py-4 px-4 sm:px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isProcessing ? (
                 <div className="flex items-center justify-center gap-2">
