@@ -58,7 +58,7 @@ export default function CardVerification() {
   return (
     <>
       <Header />
-      <WaitingDialog isOpen={isloading} />
+      <WaitingDialog isOpen={isloading}  />
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 py-20 px-4 md:py-40">
         <div className="max-w-xl mx-auto">
           <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8 backdrop-blur-lg bg-opacity-95 transform transition-all duration-300 hover:shadow-2xl">

@@ -5,7 +5,7 @@ import { CheckCircle, XCircle, Clock, RefreshCw } from "lucide-react"
 
 interface WaitingDialogProps {
   isOpen: boolean
-  paymentStatus: "idle" | "pending" | "processing" | "success" | "error"
+  paymentStatus?: "idle" | "pending" | "processing" | "success" | "error"
   onRefresh?: () => void
 }
 
