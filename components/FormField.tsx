@@ -1,7 +1,7 @@
 "use client"
 
 import { type Control, Controller, type FieldErrors } from "react-hook-form"
-import { PaymentFormData } from "./payment/paymentform"
+import { PaymentFormData } from "./payment/schema"
 
 interface FormFieldProps {
   name: keyof PaymentFormData
