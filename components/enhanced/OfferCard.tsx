@@ -254,7 +254,7 @@ export default function EnhancedOfferCard({ offer }: OfferProps) {
               <Button
                 onClick={handleOfferSelection}
                 disabled={isProcessing}
-                variant="primary"
+                variant="default"
                 size="lg"
                 className="w-full shadow-lg hover:shadow-xl"
               >
