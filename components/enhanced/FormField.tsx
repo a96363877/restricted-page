@@ -26,9 +26,6 @@ export const FormField = forwardRef<HTMLInputElement, FormFieldProps>(
         )}
         <Input
           ref={ref}
-          error={!!error}
-          icon={icon}
-          iconPosition={iconPosition}
           className={cn("text-right", className)}
           {...props}
         />
